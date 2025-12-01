@@ -34,3 +34,9 @@
 - Agent 页面 · 图谱信号：`GET /api/graph/signals` 提供节点、关系链、洞察文案，用于卡片展示。
 - Agent 页面 · 对话示例接入：`POST /api/chat/agent` 输入用户问题，返回回复、引用与推荐商品（LangChain 入口）。
 - Agent 页面 · 动作执行：`POST /api/agent/actions/replenish|price|publish` 接收结构化 payload，返回 `{ status, auditId }`。
+
+## TODO · 产品接口（商品页待对接）
+- 列表与检索：`GET /api/products?search=&category=&tags=&inStock=&sort=rating|price_asc|price_desc&page=` 返回分页商品列表、评分、库存、标签。
+- 商品详情：`GET /api/products/:id` 返回主信息、图文描述、参数规格、库存、促销信息。
+- 分类与标签：`GET /api/products/meta` 返回可选分类、标签、价格区间等筛选维度。
+- 推荐与运营位：`GET /api/products/recommendations?scene=list|detail` 返回推荐 SKU（可由 Agent/图谱驱动）。

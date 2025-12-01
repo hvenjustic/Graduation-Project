@@ -195,7 +195,7 @@ export default function AgentConsole() {
           </p>
         </div>
 
-        <div className="mt-6 grid flex-1 min-h-0 gap-4 md:grid-cols-4">
+        <div className="mt-6 grid flex-1 min-h-0 gap-4 md:grid-cols-[1fr_1fr_2.2fr]">
           {/* 执行进度 */}
           <div className="space-y-4 overflow-y-auto pr-1 md:col-span-1">
             <Card>
@@ -317,8 +317,8 @@ export default function AgentConsole() {
           </div>
 
           {/* 聊天交互（占 1/2，右侧全高） */}
-          <div className="md:col-span-2 flex min-h-0">
-            <Card className="h-full">
+          <div className="flex min-h-0 w-full">
+            <Card className="h-full w-full">
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white">
                   <FiMessageCircle className="h-4 w-4 text-indigo-500" />
