@@ -1,25 +1,25 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { FiArrowUpRight, FiCompass, FiZap } from 'react-icons/fi';
+import { FiArrowUpRight, FiCompass, FiDatabase, FiZap } from 'react-icons/fi';
 
 const quickActions = [
   {
-    title: 'Add a feature route',
-    body: 'Create a folder under src/app and drop in your page component—layout already wraps it.',
-    cta: 'Open src/app/page.tsx',
+    title: '接通图谱与商品接口',
+    body: '将 /api/agent 与 /api/products 请求连到后端或 mock 服务，替换示例数据。',
+    cta: '对接接口',
+    icon: FiDatabase
+  },
+  {
+    title: '导入知识图谱',
+    body: '准备品牌、品类、属性的节点和关系，填充推荐与问答可引用的数据源。',
+    cta: '加载节点',
     icon: FiCompass
   },
   {
-    title: 'Wire real data',
-    body: 'Swap the placeholder sections with live fetchers or server actions as needed.',
-    cta: 'Add hooks in src',
-    icon: FiArrowUpRight
-  },
-  {
-    title: 'Brand it',
-    body: 'Update colors, gradients, and the navbar logo in public/context-icon.svg.',
-    cta: 'Tweak globals.css',
+    title: '上线体验版',
+    body: '配置域名与部署流水线，保留 Agent 面板与聊天入口，便于演示毕业设计。',
+    cta: '准备部署',
     icon: FiZap
   }
 ];

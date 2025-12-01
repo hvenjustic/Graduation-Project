@@ -3,7 +3,9 @@ import {
   FiArrowUpRight,
   FiBookOpen,
   FiCheckCircle,
+  FiCpu,
   FiLayers,
+  FiMessageCircle,
   FiTrendingUp,
   FiZap
 } from 'react-icons/fi';
@@ -11,73 +13,61 @@ import QuickActions from '@/components/QuickActions';
 
 const statHighlights = [
   {
-    label: 'App shell',
-    value: 'Next.js 15 + Tailwind 4',
-    detail: 'App Router, dark mode, and opinionated styling ready to ship.',
-    accent: 'from-indigo-500/20 to-purple-500/20'
+    label: '图谱覆盖',
+    value: '38k 节点 · 120k 关系',
+    detail: '商品-品牌-属性-品类全链路关系，驱动推荐与问答。',
+    accent: 'from-indigo-500/20 to-sky-500/15'
   },
   {
-    label: 'UI toolkit',
-    value: 'Framer Motion + React Icons',
-    detail: 'Animated navigation and cards without auth dependencies.',
-    accent: 'from-emerald-500/15 to-teal-400/15'
+    label: '库存健康',
+    value: '93% 安全库存',
+    detail: '低库存实时告警，自动生成补货工单并进入 Agent 审核。',
+    accent: 'from-emerald-500/15 to-lime-400/15'
   },
   {
-    label: 'Project shape',
-    value: 'Template folderized',
-    detail: 'Config, public assets, and core components in place.',
+    label: '对话满意度',
+    value: '4.7 / 5 CSAT',
+    detail: 'LangChain 检索增强对话，回复附引用与推荐 SKU。',
     accent: 'from-amber-400/20 to-orange-500/20'
   }
 ];
 
 const tracks = [
   {
-    title: 'UI shell',
+    title: '商品知识图谱',
     icon: FiLayers,
-    points: [
-      'Sticky navigation with mobile drawer',
-      'One-click light/dark toggle stored in localStorage',
-      'Glassmorphic panels and gradient background scaffolding'
-    ]
+    points: ['品牌-品类-属性实体建模', '关系驱动关联推荐与检索', '节点信号供运营与对话调用']
   },
   {
-    title: 'Pages',
-    icon: FiBookOpen,
-    points: [
-      'App Router layout and metadata pre-wired',
-      'Landing page sections for stats, activity, and blueprint',
-      'Reusable card primitives to drop in custom data'
-    ]
+    title: '运营 Agent 编排',
+    icon: FiCpu,
+    points: ['库存巡检与补货工单', '动态调价与促销建议', '审核队列 + 人工兜底']
   },
   {
-    title: 'DX defaults',
-    icon: FiTrendingUp,
-    points: [
-      'TypeScript strict mode, path aliases, and lint setup',
-      'Tailwind 4 config with typography/scrollbar plugins',
-      'Minimal dependencies—no auth or backend coupling'
-    ]
+    title: '对话助手',
+    icon: FiMessageCircle,
+    points: ['RAG 检索 + 引用输出', '多轮意图与商品匹配', '可嵌入客服或导购场景']
   }
 ];
 
 const activity = [
   {
-    title: 'Auth stripped',
-    body: 'Removed login flows and providers; the shell renders without gated routes.',
-    tag: 'done',
-    when: 'Moments ago'
+    title: '图谱数据导入',
+    body: '完成 3 万商品与 12 万关系的批量导入，节点标签优化用于检索。',
+    tag: 'graph',
+    when: '刚刚'
   },
   {
-    title: 'Navigation hardened',
-    body: 'Responsive navbar with CTA and smooth hover states stays outside business logic.',
-    tag: 'ui',
-    when: 'Today'
+    title: 'Agent 自动补货',
+    body: '补货工单支持优先级与审批人，提交后写入审计日志。',
+    tag: 'agent',
+    when: '今天'
   },
   {
-    title: 'Template folder ready',
-    body: 'Copied configs, assets, and entry pages into /template for quick reuse.',
-    tag: 'starter',
-    when: 'Today'
+    title: '对话引用',
+    body: '对话流新增引用标注，便于复核推荐依据并二次确认下单。',
+    tag: 'chat',
+    when: '今天'
   }
 ];
 
@@ -90,10 +80,17 @@ const blueprint = `template
 └── src
     ├── app
     │   ├── layout.tsx
-    │   ├── page.tsx
-    │   └── globals.css
+    │   ├── page.tsx          # 首页 · 项目概览
+    │   ├── agent             # 运营 Agent 面板
+    │   │   ├── page.tsx
+    │   │   └── AgentConsole.tsx
+    │   ├── chat              # 对话入口
+    │   │   └── page.tsx
+    │   └── products          # 商品陈列
+    │       └── page.tsx
     └── components
         ├── ThemeToggle.tsx
+        ├── QuickActions.tsx
         └── navBar
             └── Navbar.tsx`;
 
@@ -117,17 +114,16 @@ export default function Home() {
         <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-6">
             <div className="flex flex-wrap items-center gap-3">
-              <Pill text="Auth-free shell" />
-              <Pill text="App Router" />
-              <Pill text="Tailwind 4" />
+              <Pill text="知识图谱驱动" />
+              <Pill text="运营 Agent" />
+              <Pill text="对话导购" />
             </div>
             <div className="space-y-3">
               <h1 className="text-3xl font-semibold leading-tight text-slate-900 dark:text-white md:text-4xl">
-                Context-starter skeleton, ready to clone.
+                知识图谱电商 · 运营与导购的一体化前台。
               </h1>
               <p className="max-w-2xl text-lg text-slate-600 dark:text-slate-300">
-                Use this template as the baseline for new projects. The routing, layout, theming, and
-                UI shell come pre-assembled—just plug in your data and features.
+                基于 Next.js 与 Tailwind 的前端壳，嵌入了图谱商品关系、运营 Agent 面板、对话导购入口。可直接接入后端接口或 LangChain 服务。
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -135,21 +131,21 @@ export default function Home() {
                 href="#blueprint"
                 className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:-translate-y-0.5 hover:bg-indigo-500"
               >
-                View template map
+                查看结构
                 <FiArrowUpRight className="h-4 w-4" />
               </a>
               <a
                 href="#actions"
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:border-slate-300 dark:border-slate-700 dark:text-slate-200 dark:hover:border-slate-600"
               >
-                Next steps
+                接入后端
               </a>
             </div>
           </div>
           <div className="grid w-full gap-4 sm:grid-cols-2 lg:max-w-md">
             {statHighlights.map((item) => (
               <Card key={item.label}>
-                <div className={`rounded-xl bg-gradient-to-br ${item.accent} p-4`}> 
+                <div className={`rounded-xl bg-gradient-to-br ${item.accent} p-4`}>
                   <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{item.label}</p>
                   <p className="mt-2 text-base font-semibold text-slate-900 dark:text-white">{item.value}</p>
                   <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{item.detail}</p>
@@ -189,12 +185,12 @@ export default function Home() {
       <section className="mx-auto mt-10 max-w-[108rem]" id="activity">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Activity</p>
-            <h2 className="text-xl font-semibold text-slate-900 dark:text-white">What changed for the template</h2>
+            <p className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">动态</p>
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-white">项目最近更新</h2>
           </div>
           <div className="flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-700 dark:text-slate-300">
             <FiTrendingUp className="h-4 w-4" />
-            Updated today
+            今日更新
           </div>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
@@ -218,7 +214,7 @@ export default function Home() {
       <section className="mx-auto mt-10 max-w-[108rem]" id="blueprint">
         <div className="mb-4 flex items-center gap-2">
           <FiLayers className="h-4 w-4 text-indigo-500" />
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-white">Folder blueprint</h2>
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-white">目录蓝图</h2>
         </div>
         <Card>
           <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
@@ -228,11 +224,11 @@ export default function Home() {
             <div className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
               <div className="flex items-center gap-2 text-slate-900 dark:text-white">
                 <FiBookOpen className="h-4 w-4 text-indigo-500" />
-                <span>How to reuse</span>
+                <span>接入指引</span>
               </div>
-              <p>Copy the template folder as a new project root, run <code>npm install</code>, and start building. Replace the landing content in <code>src/app/page.tsx</code> and adjust the navbar links.</p>
-              <p>Keep the <code>ThemeToggle</code> and background layer if you want dark mode and the gradient field; swap the logo in <code>public/context-icon.svg</code> to rebrand.</p>
-              <p>Tailwind plugins are pre-wired—enable prose styles or scrollbar tweaks as needed.</p>
+              <p>依赖装好后直接运行 <code>npm run dev</code>，首页、Agent、商品、聊天四个页面均可预览。</p>
+              <p>将接口对接到 <code>/api/agent</code>、<code>/api/products</code>、<code>/api/chat/agent</code>，即可展示实时数据与推荐。</p>
+              <p>替换 <code>public/context-icon.svg</code> 进行品牌化，或在 <code>globals.css</code> 调整渐变与玻璃拟态样式。</p>
             </div>
           </div>
         </Card>
@@ -241,7 +237,7 @@ export default function Home() {
       <section className="mx-auto mt-10 max-w-[108rem]" id="actions">
         <div className="mb-4 flex items-center gap-2">
           <FiZap className="h-4 w-4 text-amber-500" />
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-white">Quick next steps</h2>
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-white">接入与上线</h2>
         </div>
         <QuickActions />
       </section>
