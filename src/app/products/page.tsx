@@ -65,7 +65,7 @@ const HighlightCard = ({
 export default function ProductsPage() {
   return (
     <div className="relative isolate px-6 pb-16">
-      <section className="mx-auto mt-8 max-w-6xl overflow-hidden rounded-3xl border border-white/60 bg-white/70 p-8 shadow-lg backdrop-blur md:p-12 dark:border-white/10 dark:bg-slate-900/80">
+      <section className="mx-auto mt-8 max-w-[108rem] overflow-hidden rounded-3xl border border-white/60 bg-white/70 p-8 shadow-lg backdrop-blur md:p-12 dark:border-white/10 dark:bg-slate-900/80">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-4">
             <span className="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-200">
@@ -105,7 +105,7 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      <section className="mx-auto mt-10 max-w-6xl" id="catalog">
+      <section className="mx-auto mt-10 max-w-[108rem]" id="catalog">
         <div className="mb-4 flex items-center justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Catalog</p>
@@ -152,7 +152,7 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      <section className="mx-auto mt-10 max-w-6xl" id="checklist">
+      <section className="mx-auto mt-10 max-w-[108rem]" id="checklist">
         <div className="mb-4 flex items-center gap-2">
           <FiCheckCircle className="h-4 w-4 text-emerald-500" />
           <h2 className="text-xl font-semibold text-slate-900 dark:text-white">Launch checklist</h2>

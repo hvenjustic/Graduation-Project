@@ -113,7 +113,7 @@ const Card = ({ children }: { children: ReactNode }) => (
 export default function Home() {
   return (
     <div className="relative isolate px-6 pb-16">
-      <section className="mx-auto mt-8 max-w-6xl overflow-hidden rounded-3xl border border-white/60 bg-white/70 p-8 shadow-lg backdrop-blur md:p-12 dark:border-white/10 dark:bg-slate-900/80">
+      <section className="mx-auto mt-8 max-w-[108rem] overflow-hidden rounded-3xl border border-white/60 bg-white/70 p-8 shadow-lg backdrop-blur md:p-12 dark:border-white/10 dark:bg-slate-900/80">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-6">
             <div className="flex flex-wrap items-center gap-3">
@@ -160,7 +160,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto mt-10 grid max-w-6xl gap-6 lg:grid-cols-3" id="tracks">
+      <section className="mx-auto mt-10 grid max-w-[108rem] gap-6 lg:grid-cols-3" id="tracks">
         {tracks.map((track) => (
           <Card key={track.title}>
             <div className="flex items-start gap-4">
@@ -186,7 +186,7 @@ export default function Home() {
         ))}
       </section>
 
-      <section className="mx-auto mt-10 max-w-6xl" id="activity">
+      <section className="mx-auto mt-10 max-w-[108rem]" id="activity">
         <div className="mb-4 flex items-center justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Activity</p>
@@ -215,7 +215,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto mt-10 max-w-6xl" id="blueprint">
+      <section className="mx-auto mt-10 max-w-[108rem]" id="blueprint">
         <div className="mb-4 flex items-center gap-2">
           <FiLayers className="h-4 w-4 text-indigo-500" />
           <h2 className="text-xl font-semibold text-slate-900 dark:text-white">Folder blueprint</h2>
@@ -238,7 +238,7 @@ export default function Home() {
         </Card>
       </section>
 
-      <section className="mx-auto mt-10 max-w-6xl" id="actions">
+      <section className="mx-auto mt-10 max-w-[108rem]" id="actions">
         <div className="mb-4 flex items-center gap-2">
           <FiZap className="h-4 w-4 text-amber-500" />
           <h2 className="text-xl font-semibold text-slate-900 dark:text-white">Quick next steps</h2>

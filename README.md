@@ -26,3 +26,11 @@
 - 完善知识图谱构建与可视化。
 - 增强 Agent 策略（动态调价、异常库存预警）。
 - 丰富用户对话意图识别与推荐精度。
+
+## TODO · 接口对接（待接入 LangChain/后端）
+- Agent 页面 · 运营总览：`GET /api/agent/stats` 返回待补货、价格异常、图谱同步时间、对话排队数。
+- Agent 页面 · 自动化编排：`GET /api/agent/automations` 返回自动化流（库存巡检、调价、客服对话等）含步骤和状态。
+- Agent 页面 · 审核队列：`GET /api/agent/queue` 列出补货/调价/上架草案；`POST /api/agent/queue/:id/approve` 执行并写入审计。
+- Agent 页面 · 图谱信号：`GET /api/graph/signals` 提供节点、关系链、洞察文案，用于卡片展示。
+- Agent 页面 · 对话示例接入：`POST /api/chat/agent` 输入用户问题，返回回复、引用与推荐商品（LangChain 入口）。
+- Agent 页面 · 动作执行：`POST /api/agent/actions/replenish|price|publish` 接收结构化 payload，返回 `{ status, auditId }`。
