@@ -3,6 +3,7 @@ const nextConfig = {
   output: 'export',
   reactStrictMode: true,
   images: { unoptimized: true },
+  trailingSlash: true,
   outputFileTracingRoot: __dirname,
   experimental: {
     webpackBuildWorker: false,

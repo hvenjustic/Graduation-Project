@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -10,14 +10,15 @@ import ThemeToggle from '@/components/ThemeToggle';
 
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/products', label: 'Products' },
-  { href: '/agent', label: 'Agent' },
-  { href: '/task', label: 'Task' },
-  { href: '/chat', label: 'Chat' }
+  { href: '/products/', label: 'Products' },
+  { href: '/agent/', label: 'Agent' },
+  { href: '/task/', label: 'Task' },
+  { href: '/chat/', label: 'Chat' }
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
+  const normalizedPath = useMemo(() => (pathname === '/' ? '/' : pathname.replace(/\/+$/, '')), [pathname]);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -42,7 +43,9 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
+            const normalizedHref = link.href === '/' ? '/' : link.href.replace(/\/+$/, '');
+            const isActive =
+              normalizedPath === normalizedHref || (normalizedHref !== '/' && normalizedPath.startsWith(normalizedHref));
             return (
               <Link
                 key={link.href}
@@ -60,7 +63,7 @@ export default function Navbar() {
           })}
           <ThemeToggle />
           <Link
-            href="/products"
+            href="/products/"
             className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition hover:-translate-y-0.5 hover:bg-indigo-500"
           >
             View products
@@ -99,7 +102,7 @@ export default function Navbar() {
                 </Link>
               ))}
               <Link
-                href="/products"
+                href="/products/"
                 className="mt-2 flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white"
               >
                 View products
