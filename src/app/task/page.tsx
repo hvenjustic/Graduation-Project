@@ -31,7 +31,7 @@ type StatusResponse = {
   queue_key: string;
 };
 
-const API_BASE = process.env.NEXT_PUBLIC_SPIDER_API ?? 'http://www.hvenjustic.top:4000';
+const API_BASE = process.env.NEXT_PUBLIC_GO_API ?? 'http://localhost:5010';
 
 const parseOptionalNumber = (value: string) => {
   if (!value.trim()) return undefined;
@@ -108,7 +108,7 @@ export default function TaskPage() {
 
   const fetchStatus = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/status`, { cache: 'no-store' });
+      const res = await fetch(`${API_BASE}/api/tasks/status`, { cache: 'no-store' });
       if (!res.ok) {
         throw new Error(`状态查询失败：${res.status}`);
       }
@@ -149,7 +149,7 @@ export default function TaskPage() {
     }
 
     try {
-      const res = await fetch(`${API_BASE}/crawl`, {
+      const res = await fetch(`${API_BASE}/api/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -204,8 +204,8 @@ export default function TaskPage() {
                 创建任务并自动轮询进度
               </h1>
               <p className="max-w-3xl text-lg text-slate-600 dark:text-slate-300">
-                调用后端 <code>/crawl</code> 与 <code>/status</code> 接口：输入待爬 URL、深度与页数即可追加到 Redis 队列，右侧实时展示剩余任务数。
-                支持设置环境变量 <code>NEXT_PUBLIC_SPIDER_API</code> 指向后端地址（默认 http://www.hvenjustic.top:4000）。
+                调用后端 <code>/api/tasks</code> 与 <code>/api/tasks/status</code> 接口：输入待爬 URL、深度与页数即可追加到 Redis 队列，右侧实时展示剩余任务数。
+                支持设置环境变量 <code>NEXT_PUBLIC_GO_API</code> 指向 Go 后端地址（默认 http://localhost:5010）。
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -423,7 +423,7 @@ export default function TaskPage() {
                   {pending ?? '—'}
                 </p>
                 <p className="text-xs text-emerald-700/80 dark:text-emerald-200/80">
-                  数值来自 /status，低于 3 条时可关注新增
+                  数值来自 /api/tasks/status，低于 3 条时可关注新增
                 </p>
               </div>
               <div className="rounded-xl border border-slate-200/70 bg-slate-50/70 p-4 dark:border-slate-800/60 dark:bg-slate-900/60">
@@ -451,7 +451,7 @@ export default function TaskPage() {
               <h3 className="text-lg font-semibold">请求预览</h3>
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-300">
-              将按以下结构发送到 <code>{API_BASE}/crawl</code>，单个 URL 填写的覆盖参数会替换批量默认值。
+              将按以下结构发送到 <code>{API_BASE}/api/tasks</code>，单个 URL 填写的覆盖参数会替换批量默认值。
             </p>
             <pre className="max-h-72 overflow-auto rounded-xl bg-slate-900 p-4 text-xs leading-relaxed text-slate-100 shadow-inner">
 {payloadPreview}

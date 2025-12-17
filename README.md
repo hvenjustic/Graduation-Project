@@ -17,6 +17,11 @@
 2. 安装依赖：`npm install`。
 3. 启动开发：`npm run dev`，默认端口 3000。
 
+## 爬虫任务与结果页
+- 任务页：`/task`（提交任务、查看队列剩余）
+- 结果页：`/result`（分页列表 + 点击查看详情）
+- 后端地址通过环境变量配置：`NEXT_PUBLIC_GO_API`（默认 `http://localhost:5010`）
+
 ## 目录提示
 - `src/app/page.tsx`：主页与主要界面逻辑。
 - `src/components`：复用组件与导航配置。
