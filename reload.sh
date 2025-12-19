@@ -2,7 +2,7 @@
 
 echo "🚀 开始更新前端..."
 
-PROJECT_DIR="/root/projects/Graduation-Project"
+PROJECT_DIR="/root/projects/GP_front_end_ts"
 DEPLOY_DIR="/var/www/html"
 
 echo "📌 切换到项目目录：$PROJECT_DIR"
