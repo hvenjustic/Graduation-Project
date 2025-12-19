@@ -111,7 +111,7 @@ export default function ResultPage() {
                 {(data?.items || []).map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40">
                     <td className="px-4 py-3 font-semibold text-indigo-600 dark:text-indigo-300">
-                      <Link href={`/result/${item.id}`}>{item.id}</Link>
+                      <Link href={`/result/detail?id=${item.id}`}>{item.id}</Link>
                     </td>
                     <td className="px-4 py-3">{item.site_name || '-'}</td>
                     <td className="px-4 py-3 max-w-[520px] truncate" title={item.url}>
@@ -144,11 +144,10 @@ export default function ResultPage() {
             <div className="flex items-center gap-2">
               <Link
                 aria-disabled={page <= 1}
-                className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold transition ${
-                  page <= 1
+                className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold transition ${page <= 1
                     ? 'cursor-not-allowed border-slate-200 text-slate-300 dark:border-slate-800 dark:text-slate-600'
                     : 'border-slate-200 text-slate-700 hover:border-slate-300 dark:border-slate-700 dark:text-slate-200 dark:hover:border-slate-600'
-                }`}
+                  }`}
                 href={buildHref(Math.max(1, page - 1))}
               >
                 <FiArrowLeft className="h-4 w-4" />
@@ -156,11 +155,10 @@ export default function ResultPage() {
               </Link>
               <Link
                 aria-disabled={page >= totalPages}
-                className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold transition ${
-                  page >= totalPages
+                className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold transition ${page >= totalPages
                     ? 'cursor-not-allowed border-slate-200 text-slate-300 dark:border-slate-800 dark:text-slate-600'
                     : 'border-slate-200 text-slate-700 hover:border-slate-300 dark:border-slate-700 dark:text-slate-200 dark:hover:border-slate-600'
-                }`}
+                  }`}
                 href={buildHref(Math.min(totalPages, page + 1))}
               >
                 下一页
