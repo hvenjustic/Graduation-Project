@@ -93,7 +93,7 @@ export default function TaskPage() {
   useEffect(() => {
     if (autoPoll) {
       fetchStatus();
-      pollingRef.current = setInterval(fetchStatus, 4000);
+      pollingRef.current = setInterval(fetchStatus, 10000);
     }
     return () => {
       if (pollingRef.current) clearInterval(pollingRef.current);
@@ -325,15 +325,13 @@ export default function TaskPage() {
                 <span className="text-xs text-slate-500 dark:text-slate-400">自动轮询</span>
                 <button
                   onClick={() => setAutoPoll((prev) => !prev)}
-                  className={`relative h-6 w-11 rounded-full transition ${
-                    autoPoll ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-slate-700'
-                  }`}
+                  className={`relative h-6 w-11 rounded-full transition ${autoPoll ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-slate-700'
+                    }`}
                   aria-label="切换自动轮询"
                 >
                   <span
-                    className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition ${
-                      autoPoll ? 'translate-x-5' : ''
-                    }`}
+                    className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition ${autoPoll ? 'translate-x-5' : ''
+                      }`}
                   />
                 </button>
               </div>
@@ -376,7 +374,7 @@ export default function TaskPage() {
               将按以下结构发送到 <code>{API_BASE}/api/tasks</code>，单个 URL 填写的覆盖参数会替换批量默认值。
             </p>
             <pre className="max-h-72 overflow-auto rounded-xl bg-slate-900 p-4 text-xs leading-relaxed text-slate-100 shadow-inner">
-{payloadPreview}
+              {payloadPreview}
             </pre>
           </Card>
         </div>
