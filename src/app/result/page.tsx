@@ -1,6 +1,9 @@
 import { Suspense } from 'react';
 import ResultListClient from './ResultListClient';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default function ResultPage() {
   return (
     <Suspense
