@@ -19,6 +19,8 @@ type ResultItem = {
     url?: string;
     site_name?: string | null;
     result_md?: string | null;
+    processed_md?: string | null;
+    graph_json?: string | null;
     crawled_at?: string | null;
     llm_processed_at?: string | null;
     page_count?: number;

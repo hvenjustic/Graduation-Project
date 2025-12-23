@@ -23,6 +23,8 @@ type ResultItem = {
     crawl_count: number;
     page_count: number;
     chunk_count: number;
+    processed_md?: string | null;
+    graph_json?: string | null;
 };
 
 type ResultListResponse = {
@@ -35,6 +37,7 @@ type ResultListResponse = {
 type ResultDetail = ResultItem & {
     result_md?: string | null;
     graph_json?: string | null;
+    processed_md?: string | null;
     created_at?: string | null;
     updated_at?: string | null;
 };
@@ -81,6 +84,8 @@ export default function ResultListClient() {
     const [detailMdStore, setDetailMdStore] = useState<MarkdownStore | null>(null);
     const [openSection, setOpenSection] = useState<SectionKey | null>('fit_markdown');
     const [preview, setPreview] = useState<PreviewState | null>(null);
+    const [preprocessLoadingId, setPreprocessLoadingId] = useState<number | null>(null);
+    const [graphLoadingId, setGraphLoadingId] = useState<number | null>(null);
 
     const totalPages = useMemo(() => {
         if (!data) return 1;
@@ -177,6 +182,54 @@ export default function ResultListClient() {
         }
     };
 
+    const handlePreprocess = async (id: number) => {
+        setPreprocessLoadingId(id);
+        try {
+            const res = await fetch(`${API_BASE}/api/results/preprocess`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id }),
+            });
+            const json = await res.json();
+            if (!res.ok) {
+                throw new Error(json?.error || '请求失败');
+            }
+            alert('预处理完成');
+            fetchList();
+            if (detailId === id) {
+                fetchDetail(id);
+            }
+        } catch (e) {
+            alert(`预处理失败：${e instanceof Error ? e.message : '未知错误'}`);
+        } finally {
+            setPreprocessLoadingId(null);
+        }
+    };
+
+    const handleBuildGraph = async (id: number) => {
+        setGraphLoadingId(id);
+        try {
+            const res = await fetch(`${API_BASE}/api/results/graph`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id }),
+            });
+            const json = await res.json();
+            if (!res.ok) {
+                throw new Error(json?.error || '请求失败');
+            }
+            alert('图谱生成完成');
+            fetchList();
+            if (detailId === id) {
+                fetchDetail(id);
+            }
+        } catch (e) {
+            alert(`图谱生成失败：${e instanceof Error ? e.message : '未知错误'}`);
+        } finally {
+            setGraphLoadingId(null);
+        }
+    };
+
     return (
         <div className="px-6 pb-16">
             <div className="mx-auto mt-8 max-w-[108rem] space-y-4">
@@ -226,14 +279,34 @@ export default function ResultListClient() {
                                         <td className="px-4 py-3">{item.crawl_count}</td>
                                         <td className="px-4 py-3">{item.page_count}</td>
                                         <td className="px-4 py-3">
-                                            {item.chunk_count}
-                                            <button
-                                                onClick={() => fetchDetail(item.id)}
-                                                className="ml-3 inline-flex items-center gap-1 rounded-lg border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 transition hover:border-indigo-200 hover:text-indigo-600 dark:border-slate-700 dark:text-slate-200 dark:hover:border-indigo-700 dark:hover:text-indigo-200"
-                                            >
-                                                <FiInfo className="h-3 w-3" />
-                                                详情
-                                            </button>
+                                            <div className="flex flex-col gap-2">
+                                                <span>{item.chunk_count}</span>
+                                                <div className="flex flex-wrap gap-2">
+                                                    <button
+                                                        onClick={() => fetchDetail(item.id)}
+                                                        className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 transition hover:border-indigo-200 hover:text-indigo-600 dark:border-slate-700 dark:text-slate-200 dark:hover:border-indigo-700 dark:hover:text-indigo-200"
+                                                    >
+                                                        <FiInfo className="h-3 w-3" />
+                                                        详情
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handlePreprocess(item.id)}
+                                                        disabled={preprocessLoadingId === item.id}
+                                                        className="inline-flex items-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700 transition hover:border-amber-300 hover:text-amber-800 disabled:cursor-not-allowed disabled:opacity-60 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-200 dark:hover:border-amber-700"
+                                                    >
+                                                        <FiRefreshCw className={`h-3 w-3 ${preprocessLoadingId === item.id ? 'animate-spin' : ''}`} />
+                                                        预处理
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleBuildGraph(item.id)}
+                                                        disabled={graphLoadingId === item.id}
+                                                        className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700 transition hover:border-emerald-300 hover:text-emerald-800 disabled:cursor-not-allowed disabled:opacity-60 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-200 dark:hover:border-emerald-700"
+                                                    >
+                                                        <FiRefreshCw className={`h-3 w-3 ${graphLoadingId === item.id ? 'animate-spin' : ''}`} />
+                                                        图谱形成
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
