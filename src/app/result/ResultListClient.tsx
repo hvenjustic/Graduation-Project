@@ -23,6 +23,8 @@ type ResultItem = {
     crawl_count: number;
     page_count: number;
     chunk_count: number;
+    processed_md?: string | null;
+    graph_json?: string | null;
 };
 
 type ResultListResponse = {
@@ -35,6 +37,7 @@ type ResultListResponse = {
 type ResultDetail = ResultItem & {
     result_md?: string | null;
     graph_json?: string | null;
+    processed_md?: string | null;
     created_at?: string | null;
     updated_at?: string | null;
 };
@@ -81,6 +84,8 @@ export default function ResultListClient() {
     const [detailMdStore, setDetailMdStore] = useState<MarkdownStore | null>(null);
     const [openSection, setOpenSection] = useState<SectionKey | null>('fit_markdown');
     const [preview, setPreview] = useState<PreviewState | null>(null);
+    const [preprocessLoadingId, setPreprocessLoadingId] = useState<number | null>(null);
+    const [graphLoadingId, setGraphLoadingId] = useState<number | null>(null);
 
     const totalPages = useMemo(() => {
         if (!data) return 1;
@@ -177,6 +182,54 @@ export default function ResultListClient() {
         }
     };
 
+    const handlePreprocess = async (id: number) => {
+        setPreprocessLoadingId(id);
+        try {
+            const res = await fetch(`${API_BASE}/api/results/preprocess`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id }),
+            });
+            const json = await res.json();
+            if (!res.ok) {
+                throw new Error(json?.error || '请求失败');
+            }
+            alert('预处理完成');
+            fetchList();
+            if (detailId === id) {
+                fetchDetail(id);
+            }
+        } catch (e) {
+            alert(`预处理失败：${e instanceof Error ? e.message : '未知错误'}`);
+        } finally {
+            setPreprocessLoadingId(null);
+        }
+    };
+
+    const handleBuildGraph = async (id: number) => {
+        setGraphLoadingId(id);
+        try {
+            const res = await fetch(`${API_BASE}/api/results/graph`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id }),
+            });
+            const json = await res.json();
+            if (!res.ok) {
+                throw new Error(json?.error || '请求失败');
+            }
+            alert('图谱生成完成');
+            fetchList();
+            if (detailId === id) {
+                fetchDetail(id);
+            }
+        } catch (e) {
+            alert(`图谱生成失败：${e instanceof Error ? e.message : '未知错误'}`);
+        } finally {
+            setGraphLoadingId(null);
+        }
+    };
+
     return (
         <div className="px-6 pb-16">
             <div className="mx-auto mt-8 max-w-[108rem] space-y-4">
@@ -226,14 +279,34 @@ export default function ResultListClient() {
                                         <td className="px-4 py-3">{item.crawl_count}</td>
                                         <td className="px-4 py-3">{item.page_count}</td>
                                         <td className="px-4 py-3">
-                                            {item.chunk_count}
-                                            <button
-                                                onClick={() => fetchDetail(item.id)}
-                                                className="ml-3 inline-flex items-center gap-1 rounded-lg border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 transition hover:border-indigo-200 hover:text-indigo-600 dark:border-slate-700 dark:text-slate-200 dark:hover:border-indigo-700 dark:hover:text-indigo-200"
-                                            >
-                                                <FiInfo className="h-3 w-3" />
-                                                详情
-                                            </button>
+                                            <div className="flex flex-col gap-2">
+                                                <span>{item.chunk_count}</span>
+                                                <div className="flex flex-wrap gap-2">
+                                                    <button
+                                                        onClick={() => fetchDetail(item.id)}
+                                                        className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 transition hover:border-indigo-200 hover:text-indigo-600 dark:border-slate-700 dark:text-slate-200 dark:hover:border-indigo-700 dark:hover:text-indigo-200"
+                                                    >
+                                                        <FiInfo className="h-3 w-3" />
+                                                        详情
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handlePreprocess(item.id)}
+                                                        disabled={preprocessLoadingId === item.id}
+                                                        className="inline-flex items-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700 transition hover:border-amber-300 hover:text-amber-800 disabled:cursor-not-allowed disabled:opacity-60 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-200 dark:hover:border-amber-700"
+                                                    >
+                                                        <FiRefreshCw className={`h-3 w-3 ${preprocessLoadingId === item.id ? 'animate-spin' : ''}`} />
+                                                        预处理
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleBuildGraph(item.id)}
+                                                        disabled={graphLoadingId === item.id}
+                                                        className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700 transition hover:border-emerald-300 hover:text-emerald-800 disabled:cursor-not-allowed disabled:opacity-60 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-200 dark:hover:border-emerald-700"
+                                                    >
+                                                        <FiRefreshCw className={`h-3 w-3 ${graphLoadingId === item.id ? 'animate-spin' : ''}`} />
+                                                        图谱形成
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
@@ -305,69 +378,90 @@ export default function ResultListClient() {
                                             <div>站点：{detailData.site_name ?? '—'}</div>
                                             <div>URL：{detailData.url}</div>
                                             <div>爬取：{detailData.is_crawled ? '已完成' : '未完成'}（次数 {detailData.crawl_count ?? 0}）</div>
-                                        <div>页面数：{detailMdStore?.nums ?? detailData.page_count ?? 0} | 分块：{detailData.chunk_count ?? 0}</div>
-                                        <div>抓取时间：{formatTime(detailData.crawled_at)}</div>
-                                        <div>LLM时间：{formatTime(detailData.llm_processed_at)}</div>
-                                        <div>创建：{formatTime(detailData.created_at)}</div>
-                                        <div>更新：{formatTime(detailData.updated_at)}</div>
-                                        </div>
-                                    {!detailMdStore && <div className="text-xs text-slate-500 dark:text-slate-400">暂无 markdown 链接数据。</div>}
-                                    {sections.map((sec) => {
-                                        const isOpen = openSection === sec.key;
-                                        const isActivePreview = preview && preview.section === sec.key;
-                                        return (
-                                            <div
-                                                key={sec.key}
-                                                className="rounded-xl border border-slate-200 bg-white/70 shadow-sm dark:border-slate-800 dark:bg-slate-900/60"
-                                            >
-                                                <button
-                                                    className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-slate-800 dark:text-slate-100"
-                                                    onClick={() => setOpenSection((prev) => (prev === sec.key ? null : sec.key))}
-                                                >
-                                                    <div className="flex items-center gap-2">
-                                                        <span>{isOpen ? '▾' : '▸'}</span>
-                                                        <span>{sec.title}</span>
-                                                        <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
-                                                            {sec.desc}（{sec.data.length} 个）
-                                                        </span>
-                                                    </div>
-                                                </button>
-                                                {isOpen && (
-                                                    <div className="space-y-3 px-4 pb-4">
-                                                        <div className="h-52 overflow-auto space-y-2 rounded-lg border border-dashed border-slate-200 p-3 dark:border-slate-700">
-                                                            {sec.data.length === 0 && (
-                                                                <div className="text-xs text-slate-500 dark:text-slate-400">暂无链接</div>
-                                                            )}
-                                                            {sec.data.map((u, idx) => (
-                                                                <button
-                                                                    key={`${sec.key}-${idx}-${u}`}
-                                                                    onClick={() => handleLoadMD(u, sec.key, sec.title)}
-                                                                    className="group flex w-full items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-left text-xs text-slate-700 transition hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
-                                                                >
-                                                                    <span className="truncate">{u || '空链接'}</span>
-                                                                    <span className="text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300">预览</span>
-                                                                </button>
-                                                            ))}
-                                                        </div>
-                                                        {isActivePreview && (
-                                                            <div className="rounded-xl border border-indigo-200/70 bg-indigo-50/70 p-4 dark:border-indigo-900/40 dark:bg-slate-900/70">
-                                                                <div className="mb-2 flex items-center justify-between text-xs text-slate-700 dark:text-slate-200">
-                                                                    <span className="font-semibold">
-                                                                        预览：{preview?.type} - {preview?.url}
-                                                                    </span>
-                                                                    {preview?.loading && <span className="text-amber-600">加载中...</span>}
-                                                                    {preview?.error && <span className="text-red-500">{preview.error}</span>}
-                                                                </div>
-                                                                <div className="max-h-60 overflow-auto rounded-lg bg-slate-900 p-4 text-[11px] leading-relaxed text-slate-50 shadow-inner">
-                                                                    {preview?.loading ? '加载中...' : preview?.content || '内容为空'}
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
+                                            <div>页面数：{detailMdStore?.nums ?? detailData.page_count ?? 0} | 分块：{detailData.chunk_count ?? 0}</div>
+                                            <div>抓取时间：{formatTime(detailData.crawled_at)}</div>
+                                            <div>LLM时间：{formatTime(detailData.llm_processed_at)}</div>
+                                            <div>创建：{formatTime(detailData.created_at)}</div>
+                                            <div>更新：{formatTime(detailData.updated_at)}</div>
+                                            <div className="md:col-span-2">
+                                                预处理结果（processed_md）：{' '}
+                                                {detailData.processed_md ? (
+                                                    <a
+                                                        href={detailData.processed_md}
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                        className="text-indigo-600 underline dark:text-indigo-300"
+                                                    >
+                                                        下载/查看
+                                                    </a>
+                                                ) : (
+                                                    '—'
                                                 )}
                                             </div>
-                                        );
-                                    })}
+                                            <div className="md:col-span-2">
+                                                图谱 JSON（graph_json）：
+                                                <div className="mt-1 max-h-36 overflow-auto rounded-lg border border-dashed border-slate-200 bg-slate-50 p-2 text-xs text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                                                    {detailData.graph_json || '—'}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {!detailMdStore && <div className="text-xs text-slate-500 dark:text-slate-400">暂无 markdown 链接数据。</div>}
+                                        {sections.map((sec) => {
+                                            const isOpen = openSection === sec.key;
+                                            const isActivePreview = preview && preview.section === sec.key;
+                                            return (
+                                                <div
+                                                    key={sec.key}
+                                                    className="rounded-xl border border-slate-200 bg-white/70 shadow-sm dark:border-slate-800 dark:bg-slate-900/60"
+                                                >
+                                                    <button
+                                                        className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-slate-800 dark:text-slate-100"
+                                                        onClick={() => setOpenSection((prev) => (prev === sec.key ? null : sec.key))}
+                                                    >
+                                                        <div className="flex items-center gap-2">
+                                                            <span>{isOpen ? '▾' : '▸'}</span>
+                                                            <span>{sec.title}</span>
+                                                            <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
+                                                                {sec.desc}（{sec.data.length} 个）
+                                                            </span>
+                                                        </div>
+                                                    </button>
+                                                    {isOpen && (
+                                                        <div className="space-y-3 px-4 pb-4">
+                                                            <div className="h-52 overflow-auto space-y-2 rounded-lg border border-dashed border-slate-200 p-3 dark:border-slate-700">
+                                                                {sec.data.length === 0 && (
+                                                                    <div className="text-xs text-slate-500 dark:text-slate-400">暂无链接</div>
+                                                                )}
+                                                                {sec.data.map((u, idx) => (
+                                                                    <button
+                                                                        key={`${sec.key}-${idx}-${u}`}
+                                                                        onClick={() => handleLoadMD(u, sec.key, sec.title)}
+                                                                        className="group flex w-full items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-left text-xs text-slate-700 transition hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
+                                                                    >
+                                                                        <span className="truncate">{u || '空链接'}</span>
+                                                                        <span className="text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300">预览</span>
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                            {isActivePreview && (
+                                                                <div className="rounded-xl border border-indigo-200/70 bg-indigo-50/70 p-4 dark:border-indigo-900/40 dark:bg-slate-900/70">
+                                                                    <div className="mb-2 flex items-center justify-between text-xs text-slate-700 dark:text-slate-200">
+                                                                        <span className="font-semibold">
+                                                                            预览：{preview?.type} - {preview?.url}
+                                                                        </span>
+                                                                        {preview?.loading && <span className="text-amber-600">加载中...</span>}
+                                                                        {preview?.error && <span className="text-red-500">{preview.error}</span>}
+                                                                    </div>
+                                                                    <div className="max-h-60 overflow-auto rounded-lg bg-slate-900 p-4 text-[11px] leading-relaxed text-slate-50 shadow-inner">
+                                                                        {preview?.loading ? '加载中...' : preview?.content || '内容为空'}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
                                     </>
                                 ) : (
                                     <div className="text-xs text-slate-500 dark:text-slate-400">
