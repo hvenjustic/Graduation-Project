@@ -2,9 +2,10 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { FiArrowLeft, FiRefreshCw } from 'react-icons/fi';
+import type cytoscape from 'cytoscape';
 
 const CytoscapeComponent = dynamic(() => import('react-cytoscapejs'), { ssr: false });
 
@@ -53,6 +54,8 @@ export default function GraphViewClient() {
     const [data, setData] = useState<GraphResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [selected, setSelected] = useState<GraphNode | null>(null);
+    const cyRef = useRef<cytoscape.Core | null>(null);
 
     const fetchGraph = async () => {
         if (!id) return;
@@ -73,6 +76,7 @@ export default function GraphViewClient() {
 
     useEffect(() => {
         fetchGraph();
+        setSelected(null);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
@@ -101,6 +105,21 @@ export default function GraphViewClient() {
         return [...nodeElems, ...edgeElems];
     }, [data]);
 
+    const handleCyReady = (cy: cytoscape.Core) => {
+        if (cyRef.current) return;
+        cyRef.current = cy;
+        cy.on('tap', 'node', (evt) => {
+            const d = evt.target.data() as GraphNode & { id: string };
+            setSelected({
+                id: d.id,
+                name: d.name || d.label || d.id,
+                type: d.type,
+                label: d.label,
+                description: (d as any).description || '',
+            });
+        });
+    };
+
     const stylesheet = useMemo(
         () => [
             {
@@ -110,6 +129,7 @@ export default function GraphViewClient() {
                     'text-wrap': 'wrap',
                     'text-valign': 'center',
                     'text-halign': 'center',
+                    'text-max-width': '160px',
                     'background-color': '#4f46e5',
                     color: '#fff',
                     'font-size': 10,
@@ -127,9 +147,12 @@ export default function GraphViewClient() {
                     'target-arrow-color': '#94a3b8',
                     'line-color': '#cbd5e1',
                     'font-size': 9,
+                    'text-wrap': 'wrap',
+                    'text-max-width': '120px',
                     'text-background-opacity': 1,
                     'text-background-color': '#f8fafc',
                     'text-background-padding': 2,
+                    'text-rotation': 'autorotate',
                 },
             },
             ...Object.entries(colorByType).map(([key, value]) => ({
@@ -144,7 +167,7 @@ export default function GraphViewClient() {
 
     return (
         <div className="px-6 pb-16">
-            <div className="mx-auto mt-8 max-w-6xl space-y-4">
+            <div className="mx-auto mt-8 max-w-[108rem] space-y-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <Link
@@ -187,9 +210,11 @@ export default function GraphViewClient() {
                         {data ? (
                             <CytoscapeComponent
                                 elements={elements}
+                                minZoom={0.3}
                                 layout={{ name: 'cose', idealEdgeLength: 120, nodeOverlap: 10 }}
                                 style={{ width: '100%', height: '100%' }}
                                 stylesheet={stylesheet as any}
+                                cy={handleCyReady}
                             />
                         ) : (
                             <div className="flex h-full items-center justify-center text-sm text-slate-500 dark:text-slate-400">
@@ -197,6 +222,17 @@ export default function GraphViewClient() {
                             </div>
                         )}
                     </div>
+                    {selected && (
+                        <div className="mt-3 rounded-xl border border-slate-200 bg-white/80 p-4 text-sm text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-200">
+                            <div className="mb-1 text-xs text-slate-500 dark:text-slate-400">节点详情</div>
+                            <div className="space-y-1">
+                                <div>ID：{selected.id}</div>
+                                <div>名称：{selected.name || selected.label || '—'}</div>
+                                <div>类型：{selected.type || '—'}</div>
+                                <div>描述：{selected.description || '—'}</div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
