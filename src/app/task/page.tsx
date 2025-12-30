@@ -12,6 +12,7 @@ import {
   FiServer,
   FiTrash2
 } from 'react-icons/fi';
+import { API_BASE } from '@/config/api';
 
 type CrawlResponse = {
   queued: number;
@@ -29,7 +30,6 @@ type ClearQueueResponse = {
   removed_keys: number;
 };
 
-const API_BASE = process.env.NEXT_PUBLIC_GO_API ?? 'http://www.hvenjustic.top:4010';
 const DEFAULT_QUEUE_KEY = 'crawl4ai:queue';
 const ACTIVE_SET_KEY = 'crawl4ai:active';
 const PREPROCESS_QUEUE_KEY = 'kg:preprocess:queue';
@@ -257,7 +257,7 @@ export default function TaskPage() {
               </h1>
               <p className="max-w-3xl text-lg text-slate-600 dark:text-slate-300">
                 调用后端 <code>/api/tasks</code> 与 <code>/api/tasks/status</code> 接口：输入待爬 URL、深度与页数即可追加到 Redis 队列，右侧实时展示剩余任务数。
-                支持设置环境变量 <code>NEXT_PUBLIC_GO_API</code> 指向 Go 后端地址（默认 http://www.hvenjustic.top:4010）。
+                后端地址统一在 <code>src/config/api.ts</code> 中配置，也可通过环境变量 <code>NEXT_PUBLIC_GO_API</code> 覆盖。
               </p>
             </div>
             <div className="flex flex-wrap gap-3">

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { FiArrowLeft, FiArrowRight, FiInfo, FiRefreshCw } from 'react-icons/fi';
+import { API_BASE } from '@/config/api';
 
 type CrawlJobMeta = {
     job_id: string;
@@ -52,8 +53,6 @@ type QueueAckResponse = {
 };
 
 type ResultDetail = ResultItem;
-
-const API_BASE = process.env.NEXT_PUBLIC_GO_API ?? 'http://www.hvenjustic.top:4010';
 
 const clampInt = (value: string | null, fallback: number, min: number, max: number) => {
     const parsed = Number(value);

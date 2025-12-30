@@ -4,8 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { FiArrowLeft, FiRefreshCw, FiExternalLink } from 'react-icons/fi';
-
-const API_BASE = process.env.NEXT_PUBLIC_GO_API ?? 'http://www.hvenjustic.top:4010';
+import { API_BASE } from '@/config/api';
 
 type CrawlJobMeta = {
     job_id: string;

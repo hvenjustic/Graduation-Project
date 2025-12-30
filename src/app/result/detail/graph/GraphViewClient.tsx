@@ -6,10 +6,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { FiArrowLeft, FiRefreshCw } from 'react-icons/fi';
 import type cytoscape from 'cytoscape';
+import { API_BASE } from '@/config/api';
 
 const CytoscapeComponent = dynamic(() => import('react-cytoscapejs'), { ssr: false });
-
-const API_BASE = process.env.NEXT_PUBLIC_GO_API ?? 'http://www.hvenjustic.top:4010';
 
 type GraphNode = {
     id: string;
@@ -253,4 +252,3 @@ export default function GraphViewClient() {
         </div>
     );
 }
-
